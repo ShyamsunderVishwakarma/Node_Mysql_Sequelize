@@ -3,17 +3,42 @@ var Sequelize = models.Sequelize;
 var sequelize = models.sequelize;
 
 var userdetails = models.userdetails;
+var store = models.store;
+var warehouse = models.warehouse;
 
 exports.getAll =function(req,res){
 
-	userdetails.findAll()
+	console.log("In All")
+	userdetails.findAll(
+		{
+			include:[
+				{model:store,as:'storelist'},
+				{model:warehouse,as:'warehouselist'}
+			]
+			
+		}
+	)
 	.then(function(data){
  		 return res.status(200).send({message:"Data retieve successfully",msgtype:"S",Data:data,ErrorData:null})
 	})
 	.catch(function(err){
+		console.log(err)
 		return res.status(500).send({message:"Oops something went wrong",msgtype:"E",Data:null,ErrorData:err})
 	})
 }
+
+
+exports.getById =function(req,res){
+		var _id = req.params.id;
+		userdetails.findById(_id,{include:[{model:store,as:'storelist'}]})
+		.then(function(data){
+			  return res.status(200).send({message:"Data retieve successfully",msgtype:"S",Data:data,ErrorData:null})
+		})
+		.catch(function(err){
+			console.log(err)
+			return res.status(500).send({message:"Oops something went wrong",msgtype:"E",Data:null,ErrorData:err})
+		})
+	}
 
 exports.createUser = function(req,res){
 
@@ -63,7 +88,7 @@ exports.deleteUser = function(req,res){
 	.then(function(data){
 		console.log("deleted data : " + JSON.stringify(data));
 		return res.status(201).send({message:"Data deleted successfully",msgtype:"S",Data:data,ErrorData:null})
-	})
+		})
 	.catch(function(err){
 		console.log("exception : " + err)
 		return res.status(500).send({message:"Oops something went wrong",msgtype:"E",Data:null,ErrorData:err})

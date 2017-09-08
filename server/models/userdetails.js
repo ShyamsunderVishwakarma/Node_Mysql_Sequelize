@@ -50,5 +50,21 @@ module.exports = function(sequelize, DataTypes) {
       }
     }
   });
+  userdetails.associate = function(models){
+    userdetails.hasMany(models.store,{
+      foreignKey: 'userid',
+      onDelete:'cascade',
+      as:'storelist',
+      hooks:true
+    });
+
+    userdetails.hasMany(models.warehouse,{
+      foreignKey: 'userid',
+      onDelete:'cascade',
+      as:'warehouselist',
+      hooks:true
+    });
+  }
+
   return userdetails;
 };
